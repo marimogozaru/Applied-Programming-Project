@@ -8,7 +8,7 @@ class TCPClient:
         host: str = "localhost",
         port: int = 12345,
         n_channels: int = 32,
-        samples_per_packet: int = 18,  # Fixed: Must be int, not float
+        samples_per_packet: int = 18,  
         sampling_rate: float = 1000.0,
         buffer_seconds: float = 10.0,
     ):
@@ -17,13 +17,13 @@ class TCPClient:
         self.port = port
 
         self.buffer = EmgDataBuffer(
-            n_channels=n_channels,
-            samples_per_packet=samples_per_packet,
-            sampling_rate=sampling_rate,
-            buffer_seconds=buffer_seconds,
+            n_channels = n_channels,
+            samples_per_packet = samples_per_packet,
+            sampling_rate = sampling_rate,
+            buffer_seconds = buffer_seconds,
         )
 
-        self._socket: socket.socket | None = None
+        self._socket: None
         self._connected = False
 
     @property
@@ -49,7 +49,7 @@ class TCPClient:
                 self._socket.close()
             except Exception:
                 pass
-            self._socket = None  # Reset socket reference
+            self._socket = None  
 
         self.buffer.clear()
 
