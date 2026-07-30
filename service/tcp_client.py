@@ -1,5 +1,5 @@
 import socket
-
+from .data_buffer import EmgDataBuffer
 
 
 class TCPClient:
@@ -16,7 +16,7 @@ class TCPClient:
         self.host = host
         self.port = port
 
-        self.buffer = None(
+        self.buffer = EmgDataBuffer(
             n_channels = n_channels,
             samples_per_packet = samples_per_packet,
             sampling_rate = sampling_rate,
