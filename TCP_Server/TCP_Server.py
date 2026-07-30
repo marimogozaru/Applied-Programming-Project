@@ -8,7 +8,7 @@ from pathlib import Path
 
 class EMGTCPServer:
     def __init__(self, host='localhost', port=12345,
-                 pkl_file='D:/PhD/Teaching/Applied-Programming-2026/FullSolution/recording.pkl'):
+                 pkl_file='/Users/erixx/Desktop/Applied Programming/Applied-Programming-2026/recording.pkl'):
         self.host = host
         self.port = port
         self.pkl_file = pkl_file
@@ -113,7 +113,7 @@ class EMGTCPServer:
 
 if __name__ == "__main__":
     # Create and start the server
-    server = EMGTCPServer()
+    server = EMGTCPServer('/Users/erixx/Desktop/Applied Programming/Applied-Programming-2026/recording.pkl')
     try:
         server.start()
         # Keep the main thread alive
