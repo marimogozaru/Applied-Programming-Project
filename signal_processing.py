@@ -29,7 +29,7 @@ def apply_bandpass_filter(
         order: int=4
     )-> np.ndarray:
 
-    signal =  signal = np.asarray(signal, dtype=float)
+    signal = np.asarray(signal, dtype=float)
     if signal.ndim != 1:
         raise ValueError("apply_bandpass_filter expects a 1D signal array")
 
@@ -43,6 +43,6 @@ def apply_bandpass_filter(
 
     b,a = butter(order, [low,high], btype='band')
 
-    filtered_signal = filtfilt(b,a,signal, axids=-1)
+    filtered_signal = filtfilt(b,a,signal, axis=-1)
 
     return filtered_signal
