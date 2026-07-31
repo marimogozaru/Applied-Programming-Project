@@ -95,8 +95,9 @@ python3 main.py
 
 ```bash
 # Terminal 1
-cd TCP_Server
-python3 main.py
+cd "me project"
+source .venv/bin/activate
+python3 TCP_Server.py
 
 # Terminal 2
 cd "me project"
