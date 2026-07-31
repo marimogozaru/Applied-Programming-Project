@@ -49,8 +49,6 @@ me project/
 │ └── offline_view.py     # Offline analysis window (Matplotlib)
 └── signal_processing.py # Stateless RMS + bandpass filter functions
 ```
-**Data flow, live mode:**
-`TCP_Server` → *socket bytes* → `service/tcp_client.py` → *raw bytes* → `service/data_buffer.py` → *NumPy array* → `viewmodel/main_viewmodel.py` (applies signal mode, emits `plot_updated`) → `view/plot_widget.py` (renders)
 
 ## Requirements
 
@@ -74,7 +72,7 @@ cd "me project"
 
 2. **Create and activate a virtual environment:**
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 
 # On macOS/Linux:
 source .venv/bin/activate
@@ -90,7 +88,7 @@ pip3 install -r requirements.txt
 
 4. **Verify the setup:**
 ```bash
-python main.py
+python3 main.py
 ```
 
 ## Quick Start
@@ -98,12 +96,12 @@ python main.py
 ```bash
 # Terminal 1
 cd TCP_Server
-python main.py
+python3 main.py
 
 # Terminal 2
 cd "me project"
 source .venv/bin/activate
-python main.py
+python3 main.py
 ```
 
 Then in the application window:
@@ -156,6 +154,6 @@ Then in the application window:
 - Try, in order: 
     - (1) check for a conflicting `PyQt5`/`PyQt6` install in the same environment and uninstall it
     - (2) `pip3 uninstall PySide6 -y && pip3 install PySide6` for a clean reinstall
-    
 
-*This project was completed individually rather than in a group of 3, with the professor's prior approval*
+
+> This project was completed individually rather than in a group of 3, with the professor's prior approval
