@@ -141,7 +141,7 @@ Then in the application window:
 ## Troubleshooting
 
 **`ModuleNotFoundError` on startup**
-- Ensure the virtual environment is activated *before* running `pip install -r requirements.txt` and before running `python main.py`. Check with `pip list` that `PySide6`, `vispy`, `numpy`, `scipy`, and `matplotlib` are present in the active environment.
+- Ensure the virtual environment is activated *before* running `pip3 install -r requirements.txt` and before running `python3 main.py`. Check with `pip3 list` that `PySide6`, `vispy`, `numpy`, `scipy`, and `matplotlib` are present in the active environment.
 
 **Connection fails / status stays "Not connected"**
 - Confirm `TCP_Server.py` is running first, in its own terminal
