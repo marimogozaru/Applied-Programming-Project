@@ -23,7 +23,7 @@ class TCPClient:
             buffer_seconds = buffer_seconds,
         )
 
-        self._socket: None
+        self._socket = None
         self._connected = False
 
     @property

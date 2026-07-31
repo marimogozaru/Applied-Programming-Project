@@ -1,0 +1,88 @@
+from PySide6.QtCore import QObject, QTimer, Signal
+import numpy as np
+from service.tcp_client import TCPClient
+
+class MainViewModel(QObject):
+    plot_updated = Signal(object, object) #x,y
+    status_updated = Signal(str)
+
+    def __init__(
+        self,
+        host: str = "localhost",
+        port: int = 12345,
+        sampling_rate: float = 1000.0,
+        n_channels: int = 32,
+        samples_per_packet: int = 18,
+        buffer_seconds: float = 10.0,
+    ):
+        super().__init__()
+        self.tcp_client = TCPClient(
+            host = host,
+            port = port,
+            n_channels = n_channels,
+            samples_per_packet = samples_per_packet,
+            sampling_rate = sampling_rate,
+            buffer_seconds = buffer_seconds,
+        )
+        self.is_plotting = False
+        self.is_paused = False
+        self.selected_channel = 0
+        self.plot_all_channels = False
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_plot)
+
+    # Netwrok connection 
+    def connect_tcp(self, host = None, port = None) -> None:
+        if host is not None:
+            self.tcp_client.host = host
+        if port is not None:
+            self.tcp_client.port = port
+        try: 
+            self.tcp_client.connect()
+            self.status_updated.emit(f"Connected to {self.tcp_client.host}:{self.tcp_client.port}")
+        except OSError as e:
+            self.status_updated.emit(f"Failed to connect: {e}")
+
+    def disconnect_tcp(self) -> None:
+        self.stop_visualization()
+        self.tcp_client.disconnect()
+        self.status_updated.emit(f"Disconnected from {self.tcp_client.host}:{self.tcp_client.port}")
+
+    # Visalization control
+    def start_visualization(self) -> None:
+        if not self.tcp_client.connected():
+            self.tcp_client.connect()
+        self.is_plotting = True 
+        self.is_paused = False
+        self.timer.start(10)
+        self.status_updated.emit("Visuaalization commenced")
+
+    def stop_visualization(self) -> None:
+        self.timer.stop()
+        self.is_plotting = False
+        self.is_paused = False
+        self.status_updated.emit("Visualization stopped")
+
+    def pause_visualization(self) -> None:
+        if self.is_plotting and not self.is_paused:
+            self.is_paused = True
+            self.status_updated.emit("Visualization paused")
+
+    def resume_visualization(self) -> None:
+        if self.is_plotting and self.is_paused:
+            self.is_paused = False
+            self.status_updated.emit("Visualization resumed")
+
+    def update_plot(self) -> None:
+        if not self.is_plotting:
+            return
+        self.tcp_client.update()
+        if self.is_paused:
+            return
+        x = self.tcp_client.buffer.get_time_axis()
+        if self.plot_all_channels:
+            y = self.tcp_client.buffer.get_all_channels()
+        else:
+            y = self.tcp_client.buffer.get_channel(self.selected_channel)
+        self.plot_updated.emit(x,y)
+    
