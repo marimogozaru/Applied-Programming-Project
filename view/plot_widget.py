@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QVBoxLayout, QWidget
 from vispy import scene
 import numpy as np
 
-class VisPyPlotWidget(QWidget):
+class ChannelPlotWidget(QWidget):
     def __init__(
         self,
         n_channels: int = 32,
@@ -71,11 +71,15 @@ class VisPyPlotWidget(QWidget):
         elif y.ndim == 2: # Multi channel path
             self.single_line.visible = False
 
-            for i in range(y.shape[0]):
+            n_ch = min(y.shape[0], len(self.n_channels))
+            for i in range(n_ch):
                 self.channel_lines[i].visible = True
                 offset = i*self.channel_offset
                 pos = np.column_stack((x, y[i] + offset))
                 self.channel_lines[i].set_data(pos=pos)
+
+            for i in range(n_ch, len(self.channel_lines)):
+                self.channel_lines[i].visible = False
 
             y_min = y.min()
             y_max = y.max() + (y.shape[0]-1)*self.channel_offset
