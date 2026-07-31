@@ -115,6 +115,6 @@ class MainViewModel(QObject):
                 y = compute_rms(y)
         elif self.mode == "Filtered":
             if y.shape[-1] >= 30:
-                y = apply_bandpass_filter(y, self.tcp_client.sampling_rate)
+                y = apply_bandpass_filter(y, self.tcp_client.buffer.sampling_rate)
         
         self.plot_updated.emit(x,y)

@@ -41,8 +41,19 @@ class MainView(QMainWindow):
         self.resume_button = QPushButton("Resume")
         self.offline_button = QPushButton("Offline View") #NEW
 
-        for widget in (self.connect_button, self.channel_selector, self.mode_selector, self.all_channels_checkbox,
-                       self.start_button, self.stop_button, self.pause_button, self.resume_button, self.offline_button):
+        for widget in (
+            self.connect_button, 
+            self.channel_selector, 
+            self.mode_selector, 
+            self.all_channels_checkbox,
+            self.grid_checkbox,
+            self.color_button,
+            self.start_button, 
+            self.stop_button, 
+            self.pause_button, 
+            self.resume_button, 
+            self.offline_button
+        ):
             controls.addWidget(widget)
 
         layout.addLayout(controls)

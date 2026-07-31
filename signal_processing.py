@@ -2,19 +2,24 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 
 def compute_rms(signal: np.ndarray, window_size: int = 50) -> np.ndarray:
-    signal = np.asarray(signal, dtype=np.float64)
-    if signal.ndim != 1:
-        raise ValueError("Input signal must be a 1D array")
-
-    pad_size = window_size // 2
-    padded = np.pad(signal, (pad_size, pad_size), mode="reflect")
-
-    squared = padded ** 2
-    kernel = np.ones(window_size)/window_size
-    mean_squared = np.convolve(squared, kernel, mode="valid")
-
-    rms = np.sqrt(mean_squared)
-    return rms
+    if signal.ndim == 1:
+        pad_size = window_size // 2
+        padded = np.pad(signal, (pad_size, pad_size), mode="reflect")
+        squared = padded ** 2
+        kernel = np.ones(window_size) / window_size
+        mean_squared = np.convolve(squared, kernel, mode="valid")
+        rms = np.sqrt(mean_squared)
+        return rms[:signal.shape[0]]
+        
+    elif signal.ndim == 2:
+        n_channels = signal.shape[0]
+        rms_2d = np.zeros_like(signal)
+        for i in range(n_channels):
+            rms_2d[i] = compute_rms(signal[i], window_size = window_size)
+        return rms_2d
+        
+    else:
+        raise ValueError("compute_rms expects a 1D or 2D array")
 
 def apply_bandpass_filter(
         signal: np.ndarray,
@@ -36,8 +41,8 @@ def apply_bandpass_filter(
     low = max(low, 0.0)
     high = min(high, 1.0)
 
-    b,a = butter(order, [[low,high]], btype='band')
+    b,a = butter(order, [low,high], btype='band')
 
-    filtered_signal = filtfilt(b,a,signal)
+    filtered_signal = filtfilt(b,a,signal, axids=-1)
 
     return filtered_signal

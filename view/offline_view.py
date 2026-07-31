@@ -31,7 +31,13 @@ class OfflineView(QDialog):
         self.color_button = QPushButton("Change Color")
         self.refresh_button = QPushButton("Refresh")
 
-        for z in (self.channel_selector, self.mode_selector, self.grid_checkbox, self.color_button, self.refresh_button):
+        for z in (
+            self.channel_selector, 
+            self.mode_selector, 
+            self.grid_checkbox, 
+            self.color_button, 
+            self.refresh_button
+        ):
             controls.addWidget(z)
         layout.addLayout(controls)
 
@@ -39,7 +45,7 @@ class OfflineView(QDialog):
         self.canvas = FigureCanvasQTAgg(self.figure)
         layout.addWidget(self.canvas)
 
-        self.refresh_button.clicked.connect(self.update_plot)
+        self.refresh_button.clicked.connect(self.plot_data)
         self.grid_checkbox.toggled.connect(lambda _: self.plot_data())
         self.color_button.clicked.connect(self._cycle_color)
 
@@ -57,7 +63,7 @@ class OfflineView(QDialog):
         if x.size == 0 or y.size == 0:
             return
 
-        mode = self.mode_selector.currentIndex()
+        mode = self.mode_selector.currentText()
         if mode == "RMS":
             y = compute_rms(y, window_size=50)
         elif mode == "Filtered":
@@ -66,11 +72,11 @@ class OfflineView(QDialog):
 
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        
+
         current_color = self.COLORS[self.color_index]
         ax.plot(x, y, color=current_color)
         ax.grid(self.grid_checkbox.isChecked())
-        ax.plot(x, y)
+
         ax.set_xlabel("Time (s)")
         ax.set_ylabel("Amplitude")
         ax.set_title(f"Channel {channel_index} - {mode}")

@@ -56,8 +56,12 @@ class ChannelPlotWidget(QWidget):
 
         self.channel_lines = []
         for i in range(self.n_channels):
-            line = scene.Line(pos=np.array([[0.0, 0.0], [1.0, 1.0]]),color=(0.1,0.3,0.8,1.0),
-                              parent = self.view.scene, width=1)
+            line = scene.Line(
+                pos=np.array([[0.0, 0.0], [1.0, 1.0]]),
+                color=self.COLORS[self.color_idx],
+                parent=self.view.scene, 
+                width=1
+            )
             line.visible = False
             self.channel_lines.append(line)
 
@@ -85,7 +89,7 @@ class ChannelPlotWidget(QWidget):
             self.single_line.visible = True
             for line in self.channel_lines:
                 line.visible = False
-            pos = np.column_stack((x,y))
+            pos = np.column_stack((x, y))
             self.single_line.set_data(pos=pos)
 
             y_min, y_max = y.min(), y.max()
@@ -93,10 +97,10 @@ class ChannelPlotWidget(QWidget):
         elif y.ndim == 2: # Multi channel path
             self.single_line.visible = False
 
-            n_ch = min(y.shape[0], len(self.n_channels))
+            n_ch = min(y.shape[0], len(self.channel_lines))
             for i in range(n_ch):
                 self.channel_lines[i].visible = True
-                offset = i*self.channel_offset
+                offset = i * self.channel_offset
                 pos = np.column_stack((x, y[i] + offset))
                 self.channel_lines[i].set_data(pos=pos)
 
@@ -104,12 +108,12 @@ class ChannelPlotWidget(QWidget):
                 self.channel_lines[i].visible = False
 
             y_min = y.min()
-            y_max = y.max() + (y.shape[0]-1)*self.channel_offset
+            y_max = y.max() + (n_ch - 1) * self.channel_offset
 
         else:
             return
 
-        y_pad = max(0.1, 0.1 * (y_max-y_min + 1e-9))  # 1e-9 guarantess that y_pad is never zero
+        y_pad = max(0.1, 0.1 * (y_max - y_min + 1e-9))  # 1e-9 guarantess that y_pad is never zero
         self.view.camera.set_range(
             x=(x.min(), x.max()),
             y=(y_min - y_pad, y_max + y_pad)
