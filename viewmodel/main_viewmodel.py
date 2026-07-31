@@ -2,6 +2,8 @@ from PySide6.QtCore import QObject, QTimer, Signal
 import numpy as np
 from service.tcp_client import TCPClient
 
+from signal_processing import compute_rms, apply_bandpass_filter
+
 class MainViewModel(QObject):
     plot_updated = Signal(object, object) #x,y
     status_updated = Signal(str)
@@ -28,8 +30,14 @@ class MainViewModel(QObject):
         self.is_paused = False
         self.selected_channel = 0
         self.plot_all_channels = False
+
+        self.mode = "Original"
+
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_plot)
+
+    def set_mode(self, mode: str) -> None:
+        self.mode = mode
 
     # Netwrok connection 
     def connect_tcp(self, host = None, port = None) -> None:
@@ -88,15 +96,25 @@ class MainViewModel(QObject):
     def update_plot(self) -> None:
         if not self.is_plotting:
             return
+        
         self.tcp_client.update()
         if self.is_paused:
             return
         if not self.has_enough_data():
             return
+        
         x = self.tcp_client.buffer.get_time_axis()
+
         if self.plot_all_channels:
             y = self.tcp_client.buffer.get_all_channels()
         else:
             y = self.tcp_client.buffer.get_channel(self.selected_channel)
+
+        if self.mode == "RMS":
+            if y.shape[-1] >= 50:
+                y = compute_rms(y)
+        elif self.mode == "Filtered":
+            if y.shape[-1] >= 30:
+                y = apply_bandpass_filter(y, self.tcp_client.sampling_rate)
+        
         self.plot_updated.emit(x,y)
-    

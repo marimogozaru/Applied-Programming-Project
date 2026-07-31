@@ -4,7 +4,8 @@ from PySide6.QtWidgets import (
 )
 
 from view.plot_widget import ChannelPlotWidget          
-from viewmodel.main_viewmodel import MainViewModel              
+from viewmodel.main_viewmodel import MainViewModel   
+from view.offline_view import OfflineView           
 
 class MainView(QMainWindow):
     def __init__(self):
@@ -25,6 +26,9 @@ class MainView(QMainWindow):
         for i in range(n_channels):
             self.channel_selector.addItem(f"Channel {i}")
 
+        self.mode_selector = QComboBox()
+        self.mode_selector.addItems(["Original", "RMS", "Filtered"])
+        
         self.all_channels_checkbox = QCheckBox("Plot all Channels")
 
         self.connect_button = QPushButton("Connect")
@@ -33,7 +37,7 @@ class MainView(QMainWindow):
         self.pause_button = QPushButton("Pause")
         self.resume_button = QPushButton("Resume")
 
-        for widget in (self.connect_button, self.channel_selector, self.all_channels_checkbox,
+        for widget in (self.connect_button, self.channel_selector, self.mode_selector, self.all_channels_checkbox,
                        self.start_button, self.stop_button, self.pause_button, self.resume_button):
             controls.addWidget(widget)
 
@@ -54,8 +58,14 @@ class MainView(QMainWindow):
         self.pause_button.clicked.connect(lambda: self.view_model.pause_visualization())
         self.resume_button.clicked.connect(lambda: self.view_model.resume_visualization())
 
+        self.mode_selector.currentTextChanged.connect(self.view_model.set_mode)
+        
         self.channel_selector.currentIndexChanged.connect(self._on_channels_changed)
         self.all_channels_checkbox.toggled.connect(self._on_all_channels_toggled)
+
+    def _open_offline_view(self):
+        dialog = OfflineView(self.view_model.tcp_client.buffer, self)
+        dialog.exec_()
 
     def _on_channels_changed(self, index: int) -> None:
         self.view_model.selected_channel = index
