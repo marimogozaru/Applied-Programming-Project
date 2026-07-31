@@ -113,7 +113,7 @@ class EMGTCPServer:
 
 if __name__ == "__main__":
     # Create and start the server
-    server = EMGTCPServer('/Users/erixx/Desktop/Applied Programming/Applied-Programming-2026/recording.pkl')
+    server = EMGTCPServer(pkl_file='/Users/erixx/Desktop/Applied Programming/Applied-Programming-2026/recording.pkl')
     try:
         server.start()
         # Keep the main thread alive
