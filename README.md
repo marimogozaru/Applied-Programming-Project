@@ -33,11 +33,7 @@ A real-time EMG signal visualization application built with **PySide6** and **Vi
 
 ## Architecture
 
-The application strictly separates responsibilities across three layers, plus a standalone signal-processing module shared by both the live and offline views:
-
-- **Model (`service/`)** : owns raw data. Has no knowledge of the GUI, Qt, or plotting.
-- **ViewModel (`viewmodel/`)** : owns application state and logic. Bridges the Model and View using Qt `Signal`s and a `QTimer` polling loop. Has no knowledge of widgets or pixels.
-- **View (`view/`)** : owns the UI. Displays whatever the ViewModel emits and forwards user actions (button clicks, dropdown changes) back to the ViewModel. Contains no data-processing logic of its own.
+The application follows the MVVM (Model-View-ViewModel) pattern separating responsibilities, plus a signal-processing module shared by both live and offline views:
 
 ```bash
 me project/
