@@ -63,6 +63,7 @@ me project/
 
 All dependencies and their exact versions are pinned in *requirements.txt*.
 
+> **Note:** Depending on your OS & Python installation, you may need to use `pip3` & `python3` instead of `pip` & `python` (this is common on macOS). If one doesn't work, try the other.
 ## Installation
 
 1. **Clone the repository:**
@@ -84,7 +85,7 @@ source .venv/bin/activate
 
 3. **Install dependencies:**
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 4. **Verify the setup:**
@@ -120,7 +121,7 @@ Then in the application window:
 
 ### Offline Analysis
 - Click **Offline View** to open a separate window.
-- This window reads from the data already collected during the current session — connect and let it run for a few seconds before opening it, so there's data to inspect.
+- This window reads from the data already collected during the current session : connect and let it run for a few seconds before opening it, so there's data to inspect.
 - Independently select a channel and signal mode, then click **Refresh** to redraw.
 
 ## Application Controls
@@ -142,19 +143,19 @@ Then in the application window:
 ## Troubleshooting
 
 **`ModuleNotFoundError` on startup**
-Ensure the virtual environment is activated *before* running `pip install -r requirements.txt` and before running `python main.py`. Check with `pip list` that `PySide6`, `vispy`, `numpy`, `scipy`, and `matplotlib` are present in the active environment.
+- Ensure the virtual environment is activated *before* running `pip install -r requirements.txt` and before running `python main.py`. Check with `pip list` that `PySide6`, `vispy`, `numpy`, `scipy`, and `matplotlib` are present in the active environment.
 
 **Connection fails / status stays "Not connected"**
-Confirm `TCP_Server/main.py` is running first, in its own terminal, and printed a "Server started" message before launching the main application.
+- Confirm `TCP_Server.py` is running first, in its own terminal
 
 **Server crashes with a file-not-found error on `recording.pkl`**
-The server script's default file path is hardcoded to the original development machine. Open `TCP_Server/main.py`, locate the `EMGTCPServer(...)` call at the bottom of the file, and update the `pkl_file` argument to the absolute path of *recording.pkl* on your machine.
+- The server script's default file path is hardcoded to the original development machine. Open `TCP_Server.py`, locate the `EMGTCPServer(...)` call at the bottom of the file, and update the `pkl_file` argument to the absolute path of *recording.pkl* on your machine.
 
 **`qt.qpa.plugin: Could not find the Qt platform plugin "cocoa"` (macOS)**
-This indicates a broken or conflicting PySide6/Qt installation, not an application bug. Try, in order: (1) check for a conflicting `PyQt5`/`PyQt6` install in the same environment and uninstall it, (2) `pip uninstall PySide6 -y && pip install PySide6` for a clean reinstall, (3) check for and `unset` a stray `QT_QPA_PLATFORM_PLUGIN_PATH` environment variable.
+- This indicates a broken or conflicting PySide6/Qt installation, very normal with **(macOS)**. 
+- Try, in order: 
+    - (1) check for a conflicting `PyQt5`/`PyQt6` install in the same environment and uninstall it
+    - (2) `pip3 uninstall PySide6 -y && pip3 install PySide6` for a clean reinstall
+    
 
-**Application crashes when combining "Filtered"/"RMS" mode with "Plot all Channels"**
-This is a known limitation, not a bug: signal processing functions in *signal_processing.py* are designed for single-channel (1D) input. When "Plot all Channels" is active, mode processing is automatically skipped and the raw signal is shown instead.
-
-**Performance is choppy / laggy**
-Reduce the plotting timer interval's frequency in *viewmodel/main_viewmodel.py*, or reduce `buffer_seconds` in the `TCPClient` configuration to hold less historical data in memory.
+*This project was completed individually rather than in a group of 3, with the professor's prior approval*
