@@ -7,7 +7,7 @@ A real-time EMG signal visualization application built with **PySide6** and **Vi
 ### Real-time Visualization
 - GPU-accelerated live plotting via VisPy, capable of smooth updates at high refresh rates
 - Single-channel view with a **Channel** selector dropdown
-- **Plot all Channels** mode — displays all 32 channels simultaneously, vertically offset for readability
+- **Plot all Channels** mode : displays all 32 channels simultaneously, vertically offset for readability
 - Adjustable line **color** (cycling through a preset palette) and toggleable **grid**
 - Auto-scaling camera range based on the currently visible signal
 
@@ -25,7 +25,7 @@ A real-time EMG signal visualization application built with **PySide6** and **Vi
 
 ### Data Management
 - Rolling buffer holding the most recent samples (configurable buffer duration)
-- **Signal Mode** switching between:
+- **Signal Mode** switching between :
   - *Original* : raw signal, unprocessed
   - *RMS* : Root Mean Square envelope (sliding window)
   - *Filtered* : bandpass Butterworth filter (1–100 Hz, 4th order)
@@ -40,14 +40,14 @@ The application strictly separates responsibilities across three layers, plus a 
 - **View (`view/`)** : owns the UI. Displays whatever the ViewModel emits and forwards user actions (button clicks, dropdown changes) back to the ViewModel. Contains no data-processing logic of its own.
 
 me project/
-├── main.py              # Application entry point
-├── service/             # Model layer
-│ ├── tcp_client.py      # Non-blocking TCP socket client
-│ └── data_buffer.py     # Byte-to-array reconstruction + rolling buffer
+├── main.py # Application entry point
+├── service/ # Model layer
+│ ├── tcp_client.py # Non-blocking TCP socket client
+│ └── data_buffer.py # Byte-to-array reconstruction + rolling buffer
 ├── viewmodel/
-│ └── main_viewmodel.py  # App state, TCP lifecycle, mode switching, Qt Signals
-├── view/                # View layer
-│ ├── main_view.py       # Main window: controls + live VisPy plot
-│ ├── plot_widget.py     # VisPy canvas widget
-│ └── offline_view.py    # Offline analysis window (Matplotlib)
-└── signal_processing.py # RMS + bandpass filter functions
+│ └── main_viewmodel.py # App state, TCP lifecycle, mode switching, Qt Signals
+├── view/ # View layer
+│ ├── main_view.py # Main window: controls + live VisPy plot
+│ ├── plot_widget.py # VisPy canvas widget
+│ └── offline_view.py # Offline analysis window (Matplotlib)
+└── signal_processing.py # Stateless RMS + bandpass filter functions
