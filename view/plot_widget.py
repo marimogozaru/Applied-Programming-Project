@@ -25,18 +25,22 @@ class ChannelPlotWidget(QWidget):
         )
 
         grid = self.canvas.central_widget.add_grid(margin=10)
-        self.y_axis = scene.AxisWidget(orientation='left', axis_label='Amplitude')
-        self.x_axis = scene.AxisWidget(orientation='bottom', axis_label='Time')
-        self.y_axis.width_max = 50
-        self.x_axis.height_max = 40
+
+        self.y_axis = scene.AxisWidget(orientation='left', axis_label = 'Amplitude')
+        self.x_axis = scene.AxisWidget(orientation='bottom', axis_label ='Time (s)')
+
+        self.y_axis.width_max = 80
+        self.x_axis.height_max = 60
+
         grid.add_widget(self.y_axis, row=0, col=0)
         self.view = grid.add_view(row=0, col=1)
-        self.view.camera = 'panzoom'
+        self.view.camera = scene.PanZoomCamera()
         grid.add_widget(self.x_axis, row=1, col=1)
+        
         self.x_axis.link_view(self.view)
         self.y_axis.link_view(self.view)
 
-        self.grid_lines = scene.GridLines(parent=self.view.scene)
+        self.grid_lines = scene.GridLines(parent=self.view.scene, color=(0.7, 0.7, 0.7, 0.6))
         self.grid_lines.visible = False
 
         self.COLORS = [
