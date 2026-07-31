@@ -36,6 +36,17 @@ class ChannelPlotWidget(QWidget):
         self.x_axis.link_view(self.view)
         self.y_axis.link_view(self.view)
 
+        self.grid_lines = scene.GridLines(parent=self.view.scene)
+        self.grid_lines.visible = False
+
+        self.COLORS = [
+            (0.1, 0.3, 0.8, 1.0),  #blue (default)
+            (0.8, 0.2, 0.2, 1.0),  #red
+            (0.2, 0.7, 0.2, 1.0),  #green
+            (0.9, 0.5, 0.1, 1.0),  #Orange
+        ]
+        self.color_idx = 0
+
         self.single_line = scene.Line(
             pos=np.array([[0.0, 0.0], [1.0, 1.0]]),
             color=(0.1, 0.3, 0.8, 1.0),
@@ -51,6 +62,17 @@ class ChannelPlotWidget(QWidget):
             self.channel_lines.append(line)
 
         layout.addWidget(self.canvas.native)
+
+    def toggle_grid(self, visible: bool) -> None:
+        self.grid_lines.visible = visible
+
+    def cycle_color(self) -> None:
+        self.color_idx = (self.color_idx + 1) % len(self.COLORS)
+        new_color = self.COLORS[self.color_idx]
+
+        self.single_line.set_data(color=new_color)
+        for line in self.channel_lines:
+            line.set_data(color=new_color)
 
     def update_plot(self, x, y):
         x = np.asarray(x, dtype=float)

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QComboBox, QCheckBox, QLabel, QSlider
+    QPushButton, QComboBox, QCheckBox, QLabel
 )
 
 from view.plot_widget import ChannelPlotWidget          
@@ -31,14 +31,18 @@ class MainView(QMainWindow):
         
         self.all_channels_checkbox = QCheckBox("Plot all Channels")
 
+        self.grid_checkbox = QCheckBox("Show Grid")
+        self.color_button = QPushButton("Change Color")
+
         self.connect_button = QPushButton("Connect")
         self.start_button = QPushButton("Start")
         self.stop_button = QPushButton("Stop")
         self.pause_button = QPushButton("Pause")
         self.resume_button = QPushButton("Resume")
+        self.offline_button = QPushButton("Offline View") #NEW
 
         for widget in (self.connect_button, self.channel_selector, self.mode_selector, self.all_channels_checkbox,
-                       self.start_button, self.stop_button, self.pause_button, self.resume_button):
+                       self.start_button, self.stop_button, self.pause_button, self.resume_button, self.offline_button):
             controls.addWidget(widget)
 
         layout.addLayout(controls)
@@ -58,10 +62,15 @@ class MainView(QMainWindow):
         self.pause_button.clicked.connect(lambda: self.view_model.pause_visualization())
         self.resume_button.clicked.connect(lambda: self.view_model.resume_visualization())
 
+        self.offline_button.clicked.connect(self._open_offline_view) #NEW
+
         self.mode_selector.currentTextChanged.connect(self.view_model.set_mode)
-        
+
         self.channel_selector.currentIndexChanged.connect(self._on_channels_changed)
         self.all_channels_checkbox.toggled.connect(self._on_all_channels_toggled)
+
+        self.grid_checkbox.toggled.connect(self.plot_widget.toggle_grid)
+        self.color_button.clicked.connect(self.plot_widget.cycle_color)
 
     def _open_offline_view(self):
         dialog = OfflineView(self.view_model.tcp_client.buffer, self)
