@@ -50,12 +50,14 @@ class MainViewModel(QObject):
 
     # Visalization control
     def start_visualization(self) -> None:
-        if not self.tcp_client.connected():
-            self.tcp_client.connect()
+        if not self.tcp_client.connected:
+            self.connect_tcp()
+            if not self.tcp_client.connected:
+                return
         self.is_plotting = True 
         self.is_paused = False
         self.timer.start(10)
-        self.status_updated.emit("Visuaalization commenced")
+        self.status_updated.emit("Visualization commenced")
 
     def stop_visualization(self) -> None:
         self.timer.stop()
@@ -73,11 +75,23 @@ class MainViewModel(QObject):
             self.is_paused = False
             self.status_updated.emit("Visualization resumed")
 
+    def clear_data(self) -> None:
+        self.tcp_client.buffer.clear()
+        self.status_updated.emit("Buffer cleared")
+
+    def has_enough_data(self) -> bool:
+        return self.tcp_client.buffer.has_enough_data()
+
+    def get_channel_data(self, channel_index: int) -> np.ndarray:
+        return self.tcp_client.buffer.get_channel(channel_index)
+    
     def update_plot(self) -> None:
         if not self.is_plotting:
             return
         self.tcp_client.update()
         if self.is_paused:
+            return
+        if not self.has_enough_data():
             return
         x = self.tcp_client.buffer.get_time_axis()
         if self.plot_all_channels:

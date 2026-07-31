@@ -1,7 +1,6 @@
 import socket
 from .data_buffer import EmgDataBuffer
 
-
 class TCPClient:
     def __init__(
         self,
@@ -57,7 +56,6 @@ class TCPClient:
         if not self._connected or self._socket is None:
             return
 
-
         while True:
             try:
                 chunk = self._socket.recv(4096)
@@ -66,6 +64,5 @@ class TCPClient:
                     return
 
                 self.buffer.add_bytes(chunk)
-
             except BlockingIOError:
                 break
